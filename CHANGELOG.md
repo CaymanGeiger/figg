@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.17.0](https://github.com/adamclark64/figg/compare/v0.16.0...v0.17.0) (2026-11-18)
+
+
+### Features
+
+* **dictation:** spring the dictation box open from a pill ([#64](https://github.com/adamclark64/figg/issues/64)) ([a7a2f4f](https://github.com/adamclark64/figg/commit/a7a2f4f7b1823e56486f1bf6754211e7c90b2769))
+
 ## [0.16.0](https://github.com/adamclark64/figg/compare/v0.15.0...v0.16.0) (2026-11-18)
 
 
