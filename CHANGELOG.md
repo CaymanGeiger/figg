@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.16.0](https://github.com/adamclark64/figg/compare/v0.15.0...v0.16.0) (2026-11-18)
+
+
+### Features
+
+* **dictation:** fade the dictation box in and out ([#60](https://github.com/adamclark64/figg/issues/60)) ([4cbd747](https://github.com/adamclark64/figg/commit/4cbd747a2db77661c123750fee0cac7e2a529430))
+* **menu-bar:** add Settings… to the menu bar menu ([6e20883](https://github.com/adamclark64/figg/commit/6e20883fdd5960359bff15f4cf705a6550694ecb))
+* **notes:** write enhanced notes onto the page smoothly ([6e20883](https://github.com/adamclark64/figg/commit/6e20883fdd5960359bff15f4cf705a6550694ecb))
+* **ui:** animate tab switches, banners and new transcript lines ([6e20883](https://github.com/adamclark64/figg/commit/6e20883fdd5960359bff15f4cf705a6550694ecb))
+
+
+### Bug Fixes
+
+* **dictation:** open Settings from the dictation pill's gear ([6e20883](https://github.com/adamclark64/figg/commit/6e20883fdd5960359bff15f4cf705a6550694ecb))
+* **menu-bar:** close the menu bar menu after choosing an item ([6e20883](https://github.com/adamclark64/figg/commit/6e20883fdd5960359bff15f4cf705a6550694ecb))
+* **settings:** wrap help text so the settings pane fits its window ([85d923a](https://github.com/adamclark64/figg/commit/85d923a341416eb805a51edb91353274d0eca920))
+* **ui:** draw the Record and Ask figg buttons from the theme ([85d923a](https://github.com/adamclark64/figg/commit/85d923a341416eb805a51edb91353274d0eca920))
+
 ## [0.15.0](https://github.com/adamclark64/figg/compare/v0.14.0...v0.15.0) (2026-11-18)
 
 
