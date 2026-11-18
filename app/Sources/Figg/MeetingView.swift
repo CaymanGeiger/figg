@@ -7,6 +7,7 @@ struct MeetingView: View {
     let meetingId: String
     @EnvironmentObject var model: AppModel
     @Environment(\.theme) private var theme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var meeting: Meeting?
     @State private var title = ""
@@ -18,6 +19,7 @@ struct MeetingView: View {
     @State private var editingEnhanced = false
     @State private var enhancedDraft = ""
     @State private var templateId = ""  // "" = the configured default
+    @StateObject private var reveal = NotesReveal()
 
     enum Tab: Hashable { case notes, enhanced }
 
@@ -49,10 +51,13 @@ struct MeetingView: View {
                             }
                         }
                         .onChange(of: notes) { _, new in model.saveNotes(meetingId, new) }
+                        .transition(.opacity)
                 case .enhanced:
                     enhancedPane
+                        .transition(.opacity)
                 }
             }
+            .animation(reduceMotion ? nil : .easeOut(duration: 0.18), value: tab)
             .frame(maxWidth: 720, maxHeight: .infinity, alignment: .topLeading)
             .padding(.horizontal, 40)
             .padding(.top, 28)
@@ -100,7 +105,10 @@ struct MeetingView: View {
         .onChange(of: model.transcriptVersion) { _, _ in lines = model.transcript(meetingId) }
         .onChange(of: model.screenshotsVersion) { _, _ in shots = model.screenshots(meetingId) }
         .onChange(of: model.meetings) { _, _ in refreshMeeting() }
-        .onChange(of: streaming) { _, new in if new != nil { tab = .enhanced } }
+        .onChange(of: streaming) { _, new in
+            if new != nil { tab = .enhanced }
+            reveal.update(streaming: new, animate: !reduceMotion)
+        }
         .sheet(isPresented: Binding(
             get: { model.quickActionResults[meetingId] != nil },
             set: { if !$0 { model.quickActionResults[meetingId] = nil } }
@@ -188,7 +196,8 @@ struct MeetingView: View {
     }
 
     @ViewBuilder private var enhancedPane: some View {
-        let text = streaming ?? meeting?.enhancedNotes
+        // While notes stream in, draw the paced text rather than each raw burst.
+        let text = reveal.text ?? streaming ?? meeting?.enhancedNotes
         if editingEnhanced {
             VStack(alignment: .trailing) {
                 TextEditor(text: $enhancedDraft).font(.system(size: 13, design: .monospaced)).scrollContentBackground(.hidden)
@@ -207,7 +216,8 @@ struct MeetingView: View {
                 // No toggling while Enhance streams: that text is not saved yet.
                 EnhancedNotesView(
                     lines: Provenance.mark(enhanced: text, userNotes: notes),
-                    onToggle: streaming != nil ? nil : { line in
+                    fadeTail: reveal.isRevealing,
+                    onToggle: streaming != nil || reveal.isRevealing ? nil : { line in
                         model.toggleCheckbox(meetingId, line: line)
                         refreshMeeting()
                     }
@@ -215,7 +225,7 @@ struct MeetingView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             .overlay(alignment: .topTrailing) {
-                if streaming == nil {
+                if streaming == nil && !reveal.isRevealing {
                     Button("Edit") {
                         enhancedDraft = text
                         editingEnhanced = true
@@ -334,8 +344,10 @@ struct GeneratedDocSheet: View {
 /// "My notes" / "Enhanced" as a pill toggle instead of a stock segmented control.
 struct NotesTabs: View {
     @Environment(\.theme) private var theme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Binding var tab: MeetingView.Tab
     let hasEnhanced: Bool
+    @Namespace private var highlight
 
     var body: some View {
         HStack(spacing: 2) {
@@ -348,13 +360,20 @@ struct NotesTabs: View {
     }
 
     private func item(_ t: MeetingView.Tab, _ title: String, _ icon: String) -> some View {
-        Button { tab = t } label: {
+        Button {
+            withAnimation(reduceMotion ? nil : .snappy(duration: 0.25)) { tab = t }
+        } label: {
             Label(title, systemImage: icon)
                 .font(.callout.weight(tab == t ? .semibold : .regular))
                 .foregroundStyle(tab == t ? theme.accent : theme.inkMuted)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 5)
-                .background(tab == t ? theme.accentSoft : .clear, in: Capsule())
+                .background {
+                    // One highlight that slides between the two tabs.
+                    if tab == t {
+                        Capsule().fill(theme.accentSoft).matchedGeometryEffect(id: "tab", in: highlight)
+                    }
+                }
                 .contentShape(Capsule())
         }
         .buttonStyle(.plain)
@@ -408,14 +427,17 @@ struct RecordingStrip: View {
 struct EnhancedNotesView: View {
     @Environment(\.theme) private var theme
     let lines: [NoteLine]
+    /// Fades the last few characters in, for text that is still arriving.
+    var fadeTail = false
     /// Called with a line's `NoteLine.id` when its checkbox is clicked.
     /// nil draws the boxes but leaves them inert.
     var onToggle: ((Int) -> Void)? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
+            let tailID = fadeTail ? lines.last(where: { !$0.text.trimmingCharacters(in: .whitespaces).isEmpty })?.id : nil
             ForEach(lines) { line in
-                row(line).foregroundStyle(line.isUsers ? theme.ink : theme.inkMuted)
+                row(line, fading: line.id == tailID).foregroundStyle(color(line))
             }
         }
         .font(.system(size: 15))
@@ -423,13 +445,16 @@ struct EnhancedNotesView: View {
         .textSelection(.enabled)
     }
 
-    @ViewBuilder private func row(_ line: NoteLine) -> some View {
+    private func color(_ line: NoteLine) -> Color { line.isUsers ? theme.ink : theme.inkMuted }
+
+    @ViewBuilder private func row(_ line: NoteLine, fading: Bool = false) -> some View {
         let indent = CGFloat(line.text.prefix(while: { $0 == " " }).count / 2) * 16
         let t = line.text.trimmingCharacters(in: .whitespaces)
+        let inline = { (s: String) in self.inline(s, fadeIn: fading ? color(line) : nil) }
         if t.isEmpty {
             Spacer().frame(height: 4)
         } else if let h = t.firstMatch(of: #/^(#{1,6})\s+(.+)$/#) {
-            Text(inline(String(h.2)))
+            Text(self.inline(String(h.2), fadeIn: fading ? theme.ink : nil))
                 .font(h.1.count <= 2 ? Theme.display(20) : Theme.display(16))
                 .foregroundStyle(theme.ink)
                 .padding(.top, h.1.count <= 2 ? 12 : 6)
@@ -464,13 +489,27 @@ struct EnhancedNotesView: View {
         }
     }
 
-    private func inline(_ s: String) -> AttributedString {
-        (try? AttributedString(markdown: s, options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace))) ?? AttributedString(s)
+    /// Characters at the end of a line still being written, drawn fainter
+    /// the newer they are, so text eases in rather than popping on.
+    private static let fadeLength = 14
+
+    private func inline(_ s: String, fadeIn color: Color? = nil) -> AttributedString {
+        var a = (try? AttributedString(markdown: s, options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace))) ?? AttributedString(s)
+        guard let color else { return a }
+        var end = a.endIndex
+        for step in 0..<Self.fadeLength {
+            guard end > a.startIndex else { break }
+            let start = a.characters.index(before: end)
+            a[start..<end].foregroundColor = color.opacity(Double(step + 1) / Double(Self.fadeLength + 1))
+            end = start
+        }
+        return a
     }
 }
 
 struct TranscriptPane: View {
     @Environment(\.theme) private var theme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let lines: [TranscriptLine]
     var shots: [MeetingScreenshot] = []
     let live: Bool
@@ -534,7 +573,9 @@ struct TranscriptPane: View {
                     }
                     .scrollContentBackground(.hidden)
                     .onChange(of: lines.count) { _, _ in
-                        if live, let last = TranscriptItem.merge(lines, shots).last { proxy.scrollTo(last.id, anchor: .bottom) }
+                        guard live, let last = TranscriptItem.merge(lines, shots).last else { return }
+                        // Glide to a new line rather than jumping.
+                        withAnimation(reduceMotion ? nil : .easeOut(duration: 0.3)) { proxy.scrollTo(last.id, anchor: .bottom) }
                     }
                 }
             }
