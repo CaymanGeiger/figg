@@ -34,6 +34,8 @@ views are thin.
 | `api/` | figg's HTTP API: TypeScript Vercel functions, no runtime dependencies | Vercel project `figg-api` (root `api`) |
 | `site/` | The website, with `README.md` and `docs/` rendered into `/docs` | Vercel project `figg` (root `site`) |
 | `docs/` | Docs for all three | Published by `site/build.mjs` |
+| `specs/` | Specs for the factory (issue 89): one folder per change with `spec.md`, `design.md`, `plan.md` (see `specs/README.md`) | Not deployed |
+| `scripts/factory/` | Repo checks the factory runs before pushing and CI runs on every PR (`check-private-files.sh`) | Not deployed |
 
 Swift commands take `--package-path app` from the repo root (or run them
 in `app/`). The `app/scripts/` scripts find their own folder, so run them
@@ -120,6 +122,11 @@ check against WAV/TXT pairs in `app/Tests/FiggTranscriptionTests/Fixtures/`
   functions explaining *why*. No em-dashes in comments or docs.
 - Commits: Conventional Commits. release-please builds the changelog and
   version from these subjects, so feat/fix wording is user-facing.
+- This repository is public, and a branch is public as soon as it is
+  pushed. Specs, PR text and comments stay about the product and the code
+  (`specs/README.md`). Under `.claude/` only `settings.json`, `skills/` and
+  `agents/` are committed; run `scripts/factory/check-private-files.sh`
+  before pushing, and CI's `gates` job runs it on every PR.
 
 ## Where to look
 
