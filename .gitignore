@@ -18,8 +18,14 @@ app/scripts/node_modules/
 api/node_modules/
 api/.vercel/
 
-# Local agent context and examples
-.claude/
+# Local agent context and examples. Only the factory's shared settings,
+# skills and agents are committed; everything else under .claude/
+# (worktrees, handoffs, launch.json, archives) stays local.
+# scripts/factory/check-private-files.sh enforces the same list in CI.
+.claude/*
+!.claude/settings.json
+!.claude/skills/
+!.claude/agents/
 examples/
 
 # Local agent session artifacts
