@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.18.0](https://github.com/adamclark64/figg/compare/v0.17.0...v0.18.0) (2026-11-19)
+
+
+### Features
+
+* **dictation:** add optional ai cleanup, use raw text and process again ([#104](https://github.com/adamclark64/figg/issues/104)) ([ac7f65d](https://github.com/adamclark64/figg/commit/ac7f65d25d37d569e4b33c1398f0bc78504889a9)), closes [#41](https://github.com/adamclark64/figg/issues/41)
+* **dictation:** drop self-corrections and format spoken lists ([#105](https://github.com/adamclark64/figg/issues/105)) ([39f1a4a](https://github.com/adamclark64/figg/commit/39f1a4ab1f7b7b11355c6df638afaaf0c45bbf80)), closes [#94](https://github.com/adamclark64/figg/issues/94)
+* **site:** add google analytics for traffic, downloads and scene play ([#66](https://github.com/adamclark64/figg/issues/66)) ([c0f5a1d](https://github.com/adamclark64/figg/commit/c0f5a1d3f804f56f15c8bc9018f933f18f8ecc51)), closes [#63](https://github.com/adamclark64/figg/issues/63)
+
 ## [0.17.0](https://github.com/adamclark64/figg/compare/v0.16.0...v0.17.0) (2026-11-18)
 
 
