@@ -40,3 +40,15 @@ jobs:
 
       - name: Test
         run: swift test
+
+  # Fast Linux checks that need no Swift toolchain. The factory adds more
+  # here (issue 89); a failure blocks the PR like a failing test.
+  gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: No private files tracked
+        run: scripts/factory/check-private-files.sh
