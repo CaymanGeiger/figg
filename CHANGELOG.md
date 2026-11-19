@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.19.0](https://github.com/adamclark64/figg/compare/v0.18.0...v0.19.0) (2026-11-19)
+
+
+### Features
+
+* **export:** save a meeting as a Markdown file with its transcript ([#119](https://github.com/adamclark64/figg/issues/119)) ([3751338](https://github.com/adamclark64/figg/commit/37513385441b3ba063d80d855c4622e45d27a2f4))
+* **factory:** add the factory skills and design-critic agent ([#109](https://github.com/adamclark64/figg/issues/109)) ([359134d](https://github.com/adamclark64/figg/commit/359134d1a40b1d67c48748a919ae4217bab67ffe))
+
+
+### Bug Fixes
+
+* **permissions:** one permissions screen that fixes stuck entries ([#68](https://github.com/adamclark64/figg/issues/68)) ([de3221a](https://github.com/adamclark64/figg/commit/de3221ac0af7f897f4b06d039424780fa2c8d71b))
+
 ## [0.18.0](https://github.com/adamclark64/figg/compare/v0.17.0...v0.18.0) (2026-11-19)
 
 
