@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.19.2](https://github.com/adamclark64/figg/compare/v0.19.1...v0.19.2) (2026-11-20)
+
+
+### Bug Fixes
+
+* **transcription:** run parakeet predictions one at a time ([#123](https://github.com/adamclark64/figg/issues/123)) ([94d9622](https://github.com/adamclark64/figg/commit/94d9622056a0a8853f21e98f06fe1b50328d8c4d))
+
 ## [0.19.1](https://github.com/adamclark64/figg/compare/v0.19.0...v0.19.1) (2026-11-20)
 
 
