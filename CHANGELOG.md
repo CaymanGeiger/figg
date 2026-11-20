@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.19.1](https://github.com/adamclark64/figg/compare/v0.19.0...v0.19.1) (2026-11-20)
+
+
+### Reverts
+
+* **dictation:** pull ai cleanup to keep dictation fast ([#121](https://github.com/adamclark64/figg/issues/121)) ([c003fae](https://github.com/adamclark64/figg/commit/c003faeee9393eca5be91f5d061c7f6249bc36c9))
+
 ## [0.19.0](https://github.com/adamclark64/figg/compare/v0.18.0...v0.19.0) (2026-11-19)
 
 
