@@ -48,9 +48,9 @@ let package = Package(
                 "FiggWidget", "FiggMeetingApps", "FiggDictation", "FiggPermissions",
             ]
         ),
-        .executableTarget(name: "figg-audio-probe", dependencies: ["FiggAudio"]),
+        .executableTarget(name: "figg-audio-probe", dependencies: ["FiggAudio", "FiggMeetingApps"]),
         .executableTarget(name: "figg-asr-bench", dependencies: ["FiggTranscription", "FiggStore", "FiggAudio"]),
-        .testTarget(name: "FiggMeetingAppsTests", dependencies: ["FiggMeetingApps"]),
+        .testTarget(name: "FiggMeetingAppsTests", dependencies: ["FiggMeetingApps"], resources: [.copy("Fixtures")]),
         .testTarget(name: "FiggStoreTests", dependencies: ["FiggStore"]),
         .testTarget(name: "FiggLLMTests", dependencies: ["FiggLLM"]),
         .testTarget(name: "FiggConfigTests", dependencies: ["FiggConfig"]),
