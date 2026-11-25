@@ -35,6 +35,7 @@ let package = Package(
         .target(name: "FiggWidget"),
         .target(name: "FiggDictation"),
         .target(name: "FiggPermissions"),
+        .target(name: "FiggStartup"),
         .target(name: "FiggLLM"),
         .target(name: "FiggNotes", dependencies: ["FiggStore", "FiggLLM"]),
         .target(name: "FiggExport", dependencies: ["FiggStore", "FiggNotes"]),
@@ -45,7 +46,7 @@ let package = Package(
             dependencies: [
                 "FiggStore", "FiggAudio", "FiggTranscription",
                 "FiggLLM", "FiggNotes", "FiggExport", "FiggConfig", "FiggCalendar", "FiggUpdate", "FiggFeedback",
-                "FiggWidget", "FiggMeetingApps", "FiggDictation", "FiggPermissions",
+                "FiggWidget", "FiggMeetingApps", "FiggDictation", "FiggPermissions", "FiggStartup",
             ]
         ),
         .executableTarget(name: "figg-audio-probe", dependencies: ["FiggAudio", "FiggMeetingApps"]),
@@ -58,6 +59,7 @@ let package = Package(
         .testTarget(name: "FiggWidgetTests", dependencies: ["FiggWidget"]),
         .testTarget(name: "FiggDictationTests", dependencies: ["FiggDictation"]),
         .testTarget(name: "FiggPermissionsTests", dependencies: ["FiggPermissions"]),
+        .testTarget(name: "FiggStartupTests", dependencies: ["FiggStartup"]),
         .testTarget(name: "FiggNotesTests", dependencies: ["FiggNotes", "FiggStore", "FiggLLM"]),
         .testTarget(name: "FiggExportTests", dependencies: ["FiggExport", "FiggNotes"]),
         .testTarget(name: "FiggFeedbackTests", dependencies: ["FiggFeedback", "FiggExport"]),
